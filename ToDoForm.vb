@@ -22,6 +22,7 @@ Public Class ToDo
         adapter.Fill(table)
         DataGrid_ToDo.DataSource = table
 
+        Dim delList As New List(Of String)      '予定削除用
         For i As Integer = 0 To table.Rows.Count - 1
             If CType(Calendar.TodayDate, Date) = CType(table.Rows.Item(i).Item(0), Date) Then
                 '本日の予定を表示
@@ -29,8 +30,25 @@ Public Class ToDo
                                     table.Rows.Item(i).Item(1) + " " +
                                     table.Rows.Item(i).Item(2) + " " +
                                     table.Rows.Item(i).Item(3) + vbCrLf
+            ElseIf CType(Calendar.TodayDate, Date) > CType(table.Rows.Item(i).Item(0), Date) Then
+                '昨日以前は削除対象とする
+                delList.Add(table.Rows.Item(i).Item(0))
             End If
         Next
+
+        If delList.Count > 0 Then
+            'データベースから昨日以前のToDoを削除
+            cn.Open()
+            For Each del In delList
+                adapter.DeleteCommand = New SqlCommand("DELETE FROM Table_ToDo WHERE 日付='" + del + "'", cn)
+                adapter.DeleteCommand.ExecuteNonQuery()
+            Next
+            cn.Close()
+            table = New DataTable()
+            adapter.Fill(table)
+            DataGrid_ToDo.DataSource = table
+        End If
+
     End Sub
 
     Private Sub Calendar_DateSelected(sender As Object, e As DateRangeEventArgs) Handles Calendar.DateSelected
