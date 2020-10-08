@@ -2,10 +2,10 @@
 
 Public Class ToDo
     'データベースへの接続
-    Dim cn As New SqlConnection("Data Source=MASAMICHI-PC\SQLEXPRESS;" _
-                                        + "Initial Catalog=ToDo_DataBase;" _
-                                        + "Integrated Security=True;" _
-                                        + "Pooling=False")
+    Dim cn As New SqlConnection("Data Source=LOCAL-PC\SQL;" _
+                                + "Initial Catalog=ToDo_DataBase;" _
+                                + "Integrated Security=True;" _
+                                + "Pooling=False")
 
     '全件取得
     Dim adapter As New SqlDataAdapter("SELECT * FROM Table_ToDo", cn)
